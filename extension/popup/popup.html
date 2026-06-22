@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PromptShield AI</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+<canvas id="popup-canvas"></canvas>
+
+<!-- ─── Header ─────────────────────────────────────────────────────────────── -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2Z" fill="url(#shield-grad)"/>
+          <path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs>
+            <linearGradient id="shield-grad" x1="3" y1="2" x2="21" y2="23" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00d4ff"/>
+              <stop offset="100%" stop-color="#7b2ff7"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-name">PromptShield <span class="logo-ai">AI</span></div>
+        <div class="logo-sub">Zero-Trust AI Protection</div>
+      </div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div id="status-dot" class="status-dot safe"></div>
+    <button id="settings-btn" class="icon-btn" title="Settings">⚙️</button>
+  </div>
+</header>
+
+<!-- ─── Tabs ───────────────────────────────────────────────────────────────── -->
+<nav class="tabs">
+  <button class="tab active" data-tab="scan">🔍 Scan</button>
+  <button class="tab" data-tab="threats">⚠️ Threats</button>
+  <button class="tab" data-tab="redact">✂️ Redact</button>
+  <button class="tab" data-tab="tips">💡 Tips</button>
+</nav>
+
+<!-- ─── TAB: SCAN ──────────────────────────────────────────────────────────── -->
+<section class="tab-content active" id="tab-scan">
+
+  <!-- Prompt Input -->
+  <div class="section-label">Prompt to Analyze</div>
+  <div class="textarea-wrap">
+    <textarea id="prompt-input" placeholder="Paste your prompt here or click 'Fetch from Tab' to auto-load from the active AI platform..."></textarea>
+    <button id="fetch-btn" class="fetch-btn" title="Fetch prompt from active tab">
+      ⚡ Fetch from Tab
+    </button>
+  </div>
+
+  <!-- Action Row -->
+  <div class="action-row">
+    <button id="scan-btn" class="btn-primary scan-pulse">
+      <span class="btn-icon">🔍</span>
+      <span>Scan Prompt</span>
+    </button>
+    <button id="clear-btn" class="btn-ghost">
+      <span>Clear</span>
+    </button>
+  </div>
+
+  <!-- Scanning Animation -->
+  <div id="scanning-overlay" class="scanning-overlay hidden">
+    <div class="scan-lines"></div>
+    <div class="scan-laser-line"></div>
+    <div class="scan-text">
+      <div class="scan-spinner"></div>
+      <span>Scanning for threats...</span>
+    </div>
+  </div>
+
+  <!-- Risk Score Card -->
+  <div id="risk-card" class="risk-card hidden">
+    <div class="risk-left">
+      <div class="risk-score-wrap">
+        <svg class="risk-gauge" viewBox="0 0 100 100" width="90" height="90">
+          <circle class="gauge-bg" cx="50" cy="50" r="40" stroke-dasharray="251" stroke-dashoffset="0"/>
+          <circle id="gauge-fill" class="gauge-fill" cx="50" cy="50" r="40" stroke-dasharray="251" stroke-dashoffset="251"/>
+          <text id="gauge-score" x="50" y="50" text-anchor="middle" dominant-baseline="middle" class="gauge-text">0</text>
+        </svg>
+      </div>
+      <div class="risk-labels">
+        <div id="risk-level-badge" class="risk-badge safe">SAFE</div>
+        <div class="risk-label-sub">Risk Level</div>
+      </div>
+    </div>
+    <div class="risk-right">
+      <div class="risk-stat">
+        <span class="risk-stat-val" id="stat-threats">0</span>
+        <span class="risk-stat-lbl">Threats</span>
+      </div>
+      <div class="risk-stat">
+        <span class="risk-stat-val" id="stat-critical">0</span>
+        <span class="risk-stat-lbl">Critical</span>
+      </div>
+      <div class="risk-stat">
+        <span class="risk-stat-val" id="stat-high">0</span>
+        <span class="risk-stat-lbl">High</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Explanation -->
+  <div id="ai-explanation" class="ai-explanation hidden">
+    <div class="ai-exp-header">
+      <div class="ai-bot">🤖</div>
+      <span>AI Security Analysis</span>
+    </div>
+    <div id="ai-exp-text" class="ai-exp-text typewriter"></div>
+  </div>
+
+  <!-- Safe Result -->
+  <div id="safe-result" class="safe-result hidden">
+    <div class="safe-icon">✅</div>
+    <div class="safe-title">Prompt Looks Safe!</div>
+    <div class="safe-sub">No sensitive data detected. You're good to go.</div>
+  </div>
+
+  <!-- Quick Action Row -->
+  <div id="quick-actions-row" class="quick-actions-row hidden" style="margin-top: 15px; display: flex; gap: 10px; animation: fadeInUp 0.4s ease;">
+    <button id="quick-copy-btn" class="btn-ghost" style="flex: 1; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
+      <span>📋 Copy Sanitized</span>
+    </button>
+    <button id="quick-inject-btn" class="btn-primary" style="flex: 1.2; display: flex; align-items: center; justify-content: center; gap: 6px; background: linear-gradient(135deg, var(--blue), var(--purple));">
+      <span>⚡ Inject to AI Chat</span>
+    </button>
+  </div>
+
+</section>
+
+<!-- ─── TAB: THREATS ───────────────────────────────────────────────────────── -->
+<section class="tab-content" id="tab-threats">
+  <div id="threats-empty" class="empty-state">
+    <div class="empty-icon">🛡️</div>
+    <div class="empty-title">No Scan Yet</div>
+    <div class="empty-sub">Run a scan to see detected threats</div>
+  </div>
+  <div id="threats-list" class="threats-list hidden"></div>
+</section>
+
+<!-- ─── TAB: REDACT ────────────────────────────────────────────────────────── -->
+<section class="tab-content" id="tab-redact">
+  <div id="redact-empty" class="empty-state">
+    <div class="empty-icon">✂️</div>
+    <div class="empty-title">No Prompt Scanned</div>
+    <div class="empty-sub">Scan a prompt first to see redaction preview</div>
+  </div>
+
+  <div id="redact-content" class="redact-content hidden">
+    <div class="redact-header">
+      <div class="redact-count-badge" id="redact-count-badge">0 items redacted</div>
+      <button id="sanitize-btn" class="btn-primary btn-sm">
+        <span>🛡️ Sanitize &amp; Copy</span>
+      </button>
+    </div>
+
+    <div class="diff-container">
+      <div class="diff-col">
+        <div class="diff-label diff-label-orig">⚠️ Original</div>
+        <div id="diff-original" class="diff-text diff-original"></div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-label diff-label-safe">✅ Sanitized</div>
+        <div id="diff-sanitized" class="diff-text diff-sanitized"></div>
+      </div>
+    </div>
+
+    <div id="inject-row" class="inject-row hidden">
+      <button id="inject-btn" class="btn-primary" style="width:100%">
+        <span>⚡ Replace Prompt in Tab</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TAB: TIPS ──────────────────────────────────────────────────────────── -->
+<section class="tab-content" id="tab-tips">
+  <div class="tips-header">
+    <div class="tips-title">🔐 Security Tips</div>
+    <div class="tips-sub">Based on your activity</div>
+  </div>
+  <div id="tips-list" class="tips-list"></div>
+
+  <!-- Session Stats -->
+  <div class="session-stats">
+    <div class="session-label">📊 Session Stats</div>
+    <div class="session-grid">
+      <div class="session-item">
+        <div class="session-val" id="session-scanned">0</div>
+        <div class="session-lbl">Scanned</div>
+      </div>
+      <div class="session-item">
+        <div class="session-val" id="session-threats">0</div>
+        <div class="session-lbl">Threats</div>
+      </div>
+      <div class="session-item">
+        <div class="session-val" id="session-redactions">0</div>
+        <div class="session-lbl">Redactions</div>
+      </div>
+      <div class="session-item">
+        <div class="session-val" id="session-score">100</div>
+        <div class="session-lbl">Score</div>
+      </div>
+    </div>
+    <button id="dashboard-btn" class="btn-outline" style="margin-top:12px;width:100%;background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(123,47,247,0.1));border:1px solid rgba(0,212,255,0.3);color:#00d4ff;font-weight:700">
+      📈 Open Analytics Dashboard
+    </button>
+  </div>
+</section>
+
+<!-- ─── Floating AI Bot ──────────────────────────────────────────────────────-->
+<div id="ai-bot" class="ai-bot-fab" title="PromptShield AI Assistant">
+  <div class="bot-inner">🤖</div>
+  <div class="bot-ring"></div>
+</div>
+
+<!-- ─── Toast ──────────────────────────────────────────────────────────────── -->
+<div id="toast" class="toast hidden"></div>
+
+<!-- ─── Scripts ────────────────────────────────────────────────────────────── -->
+<script src="../engine/detectionEngine.js"></script>
+<script src="../engine/riskEngine.js"></script>
+<script src="../engine/redactionEngine.js"></script>
+<script src="../storage/storageManager.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

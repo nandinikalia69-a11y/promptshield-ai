@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PromptShield AI — Analytics Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <!-- Chart.js from CDN — works offline once cached, or use local copy -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="dashboard.css"/>
+</head>
+<body>
+
+<!-- ─── Particles ─────────────────────────────────────────────────────────── -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- ─── Sidebar ──────────────────────────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🛡️</div>
+    <div>
+      <div class="logo-name">PromptShield <span class="grad">AI</span></div>
+      <div class="logo-sub">Analytics Dashboard</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-group-label">Analytics</div>
+    <a href="#" class="nav-item active" data-section="overview">
+      <span class="nav-icon">📊</span> Overview
+    </a>
+    <a href="#" class="nav-item" data-section="threats">
+      <span class="nav-icon">⚠️</span> Threat Logs
+    </a>
+    <a href="#" class="nav-item" data-section="charts">
+      <span class="nav-icon">📈</span> Charts
+    </a>
+    <a href="#" class="nav-item" data-section="compliance">
+      <span class="nav-icon">🔒</span> Compliance
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      <span>Live Sync Active</span>
+    </div>
+    <div class="last-updated" id="last-updated">–</div>
+    <button class="btn-danger-sm" id="clear-btn">🗑️ Clear All Data</button>
+  </div>
+</aside>
+
+<!-- ─── Main Content ──────────────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- Header -->
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <h1 id="section-title">Security <span class="grad">Overview</span></h1>
+      <p id="section-sub">Real-time AI prompt security monitoring · Chrome Storage Sync</p>
+    </div>
+    <div class="top-bar-right">
+      <div class="status-pill safe" id="security-status">
+        <div class="status-dot"></div>
+        <span id="security-status-text">Protected</span>
+      </div>
+      <button class="btn-refresh" id="refresh-btn" title="Refresh data">↺</button>
+    </div>
+  </header>
+
+  <!-- ─── SECTION: OVERVIEW ───────────────────────────────────────────────── -->
+  <section id="section-overview" class="section active">
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-top">
+          <div class="stat-label">Prompts Scanned</div>
+          <div class="stat-icon">🔍</div>
+        </div>
+        <div class="stat-value" id="s-total-scanned">0</div>
+        <div class="stat-sub" id="s-scanned-sub">All time</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-top">
+          <div class="stat-label">Threats Detected</div>
+          <div class="stat-icon">⚠️</div>
+        </div>
+        <div class="stat-value" id="s-total-threats">0</div>
+        <div class="stat-sub" id="s-threats-sub">Across all scans</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-top">
+          <div class="stat-label">High Risk Scans</div>
+          <div class="stat-icon">🔴</div>
+        </div>
+        <div class="stat-value" id="s-high-risk">0</div>
+        <div class="stat-sub">Critical + High</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-top">
+          <div class="stat-label">Redactions</div>
+          <div class="stat-icon">✂️</div>
+        </div>
+        <div class="stat-value" id="s-redactions">0</div>
+        <div class="stat-sub">Items sanitized</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-top">
+          <div class="stat-label">Security Score</div>
+          <div class="stat-icon">🛡️</div>
+        </div>
+        <div class="stat-value" id="s-score">100</div>
+        <div class="stat-sub">/ 100 · Your rating</div>
+      </div>
+    </div>
+
+    <!-- Two-column layout -->
+    <div class="two-col">
+      <!-- Recent Activity -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Recent Activity</div>
+          <a href="#" class="card-link" data-section="threats">View All →</a>
+        </div>
+        <div id="recent-activity" class="activity-list">
+          <div class="empty-state">🛡️<br/>No scans yet.<br/><small>Scan a prompt to see activity.</small></div>
+        </div>
+      </div>
+
+      <!-- Top Threats & Risk Breakdown -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Top Threat Categories</div>
+        </div>
+        <div id="threat-bars" class="threat-bars">
+          <div class="empty-state">📊<br/>No data yet.</div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="card-title" style="margin-bottom:12px">Risk Distribution</div>
+        <div id="risk-pills" class="risk-pills"></div>
+      </div>
+    </div>
+
+    <!-- Platform Status -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Protected AI Platforms</div>
+        <div class="card-badge green-badge">● Active</div>
+      </div>
+      <div class="platform-grid" id="platform-grid">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ─── SECTION: THREAT LOGS ─────────────────────────────────────────────── -->
+  <section id="section-threats" class="section">
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="table-controls">
+        <input type="text" id="search-input" placeholder="🔍  Search threats, platforms..." class="search-box"/>
+        <div class="filter-pills" id="filter-pills">
+          <button class="fpill active" data-filter="All">All</button>
+          <button class="fpill" data-filter="CRITICAL">CRITICAL</button>
+          <button class="fpill" data-filter="HIGH">HIGH</button>
+          <button class="fpill" data-filter="MEDIUM">MEDIUM</button>
+          <button class="fpill" data-filter="LOW">LOW</button>
+        </div>
+        <div class="table-count" id="table-count">0 entries</div>
+      </div>
+      <div class="table-wrap">
+        <table class="threat-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Platform</th>
+              <th>Risk</th>
+              <th>Score</th>
+              <th>Threats</th>
+              <th>Prompt Preview</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="threat-tbody">
+            <tr><td colspan="7" class="empty-row">No threat data found.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION: CHARTS ──────────────────────────────────────────────────── -->
+  <section id="section-charts" class="section">
+    <div class="charts-grid">
+      <div class="card chart-card">
+        <div class="card-header">
+          <div class="card-title">Threat Type Distribution</div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-threat-types"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <div class="card-header">
+          <div class="card-title">Risk Level Breakdown</div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-risk-levels"></canvas></div>
+      </div>
+      <div class="card chart-card wide">
+        <div class="card-header">
+          <div class="card-title">Daily Scan Trends — Last 7 Days</div>
+        </div>
+        <div class="chart-wrap tall"><canvas id="chart-daily-trends"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <div class="card-header">
+          <div class="card-title">Platform Distribution</div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-platforms"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION: COMPLIANCE ──────────────────────────────────────────────── -->
+  <section id="section-compliance" class="section">
+    <div class="compliance-grid" id="compliance-grid">
+      <!-- Filled by JS -->
+    </div>
+    <div class="disclaimer">
+      ⚠️ <strong>Disclaimer:</strong> These indicators reflect PromptShield AI's technical controls that support compliance. Full regulatory compliance requires additional legal, organizational, and procedural measures.
+    </div>
+  </section>
+
+</main>
+
+<!-- ─── Toast ──────────────────────────────────────────────────────────────── -->
+<div id="toast" class="toast hidden"></div>
+
+<!-- ─── Scripts ──────────────────────────────────────────────────────────── -->
+<script src="../storage/storageManager.js"></script>
+<script src="../storage/analyticsEngine.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

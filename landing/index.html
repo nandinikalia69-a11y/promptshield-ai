@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PromptShield AI — Zero-Trust AI Protection for Generative AI</title>
+  <meta name="description" content="PromptShield AI protects sensitive information before it reaches ChatGPT, Claude, Gemini and other public AI tools. Real-time detection, auto-redaction, and risk scoring."/>
+  <meta property="og:title" content="PromptShield AI — Zero-Trust AI Protection"/>
+  <meta property="og:description" content="Protect sensitive data before it reaches public AI tools."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ─── Particle Canvas ──────────────────────────────────────────────────────-->
+<canvas id="particle-canvas"></canvas>
+
+<!-- ─── Navigation ──────────────────────────────────────────────────────────-->
+<nav id="navbar" class="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2Z" fill="url(#nl-grad)"/>
+        <path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="nl-grad" x1="3" y1="2" x2="21" y2="23" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#00d4ff"/><stop offset="100%" stop-color="#7b2ff7"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="nav-brand">PromptShield <span class="grad-text">AI</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#" class="btn-nav">
+        <span>🛡️ Install Extension</span>
+      </a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<!-- ─── HERO ─────────────────────────────────────────────────────────────────-->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-glow glow-1"></div>
+    <div class="hero-glow glow-2"></div>
+  </div>
+
+  <div class="container hero-content">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      <span>AI Security Layer · Now Available</span>
+    </div>
+
+    <h1 class="hero-title">
+      Secure Prompts.<br/>
+      <span class="grad-text">Safe AI.</span><br/>
+      Trusted Innovation.
+    </h1>
+
+    <p class="hero-sub">
+      Protect sensitive information before it reaches ChatGPT, Claude, Gemini, and other public AI tools.
+      Real-time detection. Zero-trust architecture. Enterprise-grade security in one click.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#" class="btn-hero btn-primary-hero">
+        <span>🛡️ Install Free Extension</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#features" class="btn-hero btn-ghost-hero">
+        <span>See Features</span>
+      </a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-pill"><span class="stat-n" data-target="9">0</span><span class="stat-lbl">Threat Detectors</span></div>
+      <div class="stat-pill"><span class="stat-n" data-target="100">0</span><span class="stat-lbl">% Local Processing</span></div>
+      <div class="stat-pill"><span class="stat-n" data-target="5">0</span><span class="stat-lbl">AI Platforms Protected</span></div>
+    </div>
+
+    <!-- Hero Demo Card -->
+    <div class="hero-demo">
+      <div class="demo-bar">
+        <div class="demo-dots"><span></span><span></span><span></span></div>
+        <div class="demo-title">PromptShield AI — Threat Detection</div>
+        <div class="demo-badge critical">⚠️ CRITICAL</div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-input-label">Prompt:</div>
+        <div class="demo-input">
+          My API key is <span class="demo-threat">sk-aBcDeFgHiJkLmNoPqRsT</span> and my email is 
+          <span class="demo-threat-med">john@company.com</span>. Help me debug this issue.
+        </div>
+        <div class="demo-arrow">↓ PromptShield scans &amp; sanitizes</div>
+        <div class="demo-output-label">Safe Prompt:</div>
+        <div class="demo-output">
+          My API key is <span class="demo-safe">[OPENAI_API_KEY_REDACTED]</span> and my email is
+          <span class="demo-safe">[EMAIL_REDACTED]</span>. Help me debug this issue.
+        </div>
+        <div class="demo-footer">
+          <span class="demo-tag red">🔴 API Key · CRITICAL</span>
+          <span class="demo-tag yellow">🟡 Email · MEDIUM</span>
+          <span class="demo-score">Risk Score: <b>72</b>/100</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROBLEM ───────────────────────────────────────────────────────────────-->
+<section class="section" id="problem">
+  <div class="container">
+    <div class="section-badge">⚠️ The Problem</div>
+    <h2 class="section-title">Your Data is Leaking into AI</h2>
+    <p class="section-sub">Every day, teams unknowingly share sensitive data with public AI tools — creating massive security, compliance, and IP risks.</p>
+
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-icon">🔑</div>
+        <h3>API Keys & Credentials</h3>
+        <p>Developers paste API keys, database passwords, and access tokens into AI chat for debugging help.</p>
+        <div class="problem-stat">68% of developers</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">👤</div>
+        <h3>Personal Data (PII)</h3>
+        <p>Customer emails, phone numbers, and IDs are shared for analysis without anonymization.</p>
+        <div class="problem-stat">GDPR violations risk</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">💻</div>
+        <h3>Proprietary Code</h3>
+        <p>Source code containing business logic, trade secrets, and unreleased features gets sent to cloud AI.</p>
+        <div class="problem-stat">IP exposure risk</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">💳</div>
+        <h3>Financial Data</h3>
+        <p>Credit cards, Aadhaar numbers, PAN cards, and banking data shared for financial AI analysis.</p>
+        <div class="problem-stat">PCI-DSS violations</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SOLUTION ──────────────────────────────────────────────────────────────-->
+<section class="section section-dark" id="solution">
+  <div class="container">
+    <div class="section-badge">✅ The Solution</div>
+    <h2 class="section-title">Zero-Trust <span class="grad-text">AI Protection</span></h2>
+    <p class="section-sub">PromptShield AI acts as a real-time security layer between you and public AI tools — scanning, scoring, and sanitizing every prompt before submission.</p>
+
+    <div class="solution-flow">
+      <div class="flow-step">
+        <div class="flow-num">01</div>
+        <div class="flow-icon">📝</div>
+        <div class="flow-title">You Write a Prompt</div>
+        <div class="flow-desc">Compose your prompt in ChatGPT, Claude, or any AI tool</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-num">02</div>
+        <div class="flow-icon">🔍</div>
+        <div class="flow-title">PromptShield Scans</div>
+        <div class="flow-desc">Real-time detection across 9 threat categories</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-num">03</div>
+        <div class="flow-icon">🛡️</div>
+        <div class="flow-title">Threats Detected</div>
+        <div class="flow-desc">Risk score, severity classification, and AI explanation</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-num">04</div>
+        <div class="flow-icon">✂️</div>
+        <div class="flow-title">Auto-Redacted</div>
+        <div class="flow-desc">One click to sanitize and safely submit your prompt</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ──────────────────────────────────────────────────────────────-->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-badge">⚡ Features</div>
+    <h2 class="section-title">Enterprise-Grade <span class="grad-text">Security Features</span></h2>
+    <p class="section-sub">Everything you need to use AI tools safely, built into a lightweight browser extension.</p>
+
+    <div class="features-grid">
+      <div class="feat-card feat-large">
+        <div class="feat-icon-wrap">🔍</div>
+        <h3>Real-Time Detection Engine</h3>
+        <p>9 modular detectors scan for API keys, passwords, PII, financial data, source code, credentials, and more — all processed locally in your browser.</p>
+        <div class="feat-tags">
+          <span>Email</span><span>API Keys</span><span>AWS Keys</span>
+          <span>Passwords</span><span>Credit Cards</span><span>Source Code</span>
+        </div>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon-wrap">📊</div>
+        <h3>Risk Scoring</h3>
+        <p>Dynamic 0–100 risk score calculated from weighted severity across all threat categories.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon-wrap">✂️</div>
+        <h3>Auto-Redaction</h3>
+        <p>Instant one-click prompt sanitization with smart pattern replacement preserving context.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon-wrap">🤖</div>
+        <h3>AI Explanation</h3>
+        <p>Natural language explanation of why your prompt is dangerous and what to do about it.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon-wrap">⚖️</div>
+        <h3>Diff Preview</h3>
+        <p>Side-by-side comparison of original and sanitized prompts before you submit.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon-wrap">🌐</div>
+        <h3>Multi-Platform</h3>
+        <p>Works across ChatGPT, Claude, Gemini, DeepSeek, Perplexity, and Copilot automatically.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon-wrap">📈</div>
+        <h3>Analytics Dashboard</h3>
+        <p>Beautiful SaaS dashboard with charts, threat logs, compliance indicators, and security insights.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon-wrap">🔒</div>
+        <h3>100% Local</h3>
+        <p>No backend. No servers. No data sent anywhere. Everything runs in your browser for maximum privacy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ──────────────────────────────────────────────────────────-->
+<section class="section section-dark" id="how-it-works">
+  <div class="container">
+    <div class="section-badge">🔧 How It Works</div>
+    <h2 class="section-title">Three Layers of <span class="grad-text">Protection</span></h2>
+
+    <div class="layers-grid">
+      <div class="layer-card">
+        <div class="layer-num">Layer 1</div>
+        <div class="layer-title">🔍 Detection Engine</div>
+        <div class="layer-desc">
+          <p>Modular regex-based detectors scan prompts for 20+ sensitive data patterns across 6 categories.</p>
+          <ul>
+            <li>EmailDetector — RFC 5322 patterns</li>
+            <li>APIKeyDetector — 14 key formats</li>
+            <li>FinancialDetector — PCI-DSS patterns</li>
+            <li>SourceCodeDetector — 6 languages</li>
+            <li>CredentialDetector — Password patterns</li>
+          </ul>
+        </div>
+        <div class="layer-code">
+          <code>→ { threats[], categories[], count }</code>
+        </div>
+      </div>
+
+      <div class="layer-card">
+        <div class="layer-num">Layer 2</div>
+        <div class="layer-title">⚖️ Risk Engine</div>
+        <div class="layer-desc">
+          <p>Composite risk score using weighted severity model. Considers threat count, categories, and diversity.</p>
+          <ul>
+            <li>CRITICAL: 35 points/threat</li>
+            <li>HIGH: 20 points/threat</li>
+            <li>MEDIUM: 10 points/threat</li>
+            <li>LOW: 3 points/threat</li>
+          </ul>
+        </div>
+        <div class="layer-code">
+          <code>→ { score: 0–100, level, explanation }</code>
+        </div>
+      </div>
+
+      <div class="layer-card">
+        <div class="layer-num">Layer 3</div>
+        <div class="layer-title">✂️ Redaction Engine</div>
+        <div class="layer-desc">
+          <p>Ordered pattern substitution with context-aware redaction. Preserves prompt structure and meaning.</p>
+          <ul>
+            <li>Priority ordering (critical first)</li>
+            <li>Smart phone disambiguation</li>
+            <li>Structural preservation</li>
+            <li>Diff generation for preview</li>
+          </ul>
+        </div>
+        <div class="layer-code">
+          <code>→ { sanitized, redactionCount, diff }</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ARCHITECTURE ──────────────────────────────────────────────────────────-->
+<section class="section" id="architecture">
+  <div class="container">
+    <div class="section-badge">🏗️ Architecture</div>
+    <h2 class="section-title">Interactive <span class="grad-text">Data Flow</span></h2>
+    <p class="section-sub">See how PromptShield intercepts and protects every prompt in real-time.</p>
+
+    <div class="arch-diagram">
+      <div class="arch-node arch-user">
+        <div class="arch-icon">👤</div>
+        <div class="arch-label">User</div>
+        <div class="arch-sub">Types prompt</div>
+      </div>
+
+      <div class="arch-arrow animated-arrow">
+        <div class="arch-arrow-line"></div>
+        <div class="arch-arrow-dot"></div>
+      </div>
+
+      <div class="arch-node arch-extension">
+        <div class="arch-icon">🛡️</div>
+        <div class="arch-label">PromptShield</div>
+        <div class="arch-sub">Chrome Extension MV3</div>
+      </div>
+
+      <div class="arch-split">
+        <div class="arch-branch">
+          <div class="arch-arrow-v animated-arrow">
+            <div class="arch-arrow-line-v"></div>
+            <div class="arch-arrow-dot-v"></div>
+          </div>
+          <div class="arch-node arch-detect">
+            <div class="arch-icon">🔍</div>
+            <div class="arch-label">Detection</div>
+            <div class="arch-sub">9 Detectors</div>
+          </div>
+          <div class="arch-arrow-v animated-arrow" style="animation-delay:0.3s">
+            <div class="arch-arrow-line-v"></div>
+            <div class="arch-arrow-dot-v"></div>
+          </div>
+          <div class="arch-node arch-risk">
+            <div class="arch-icon">⚖️</div>
+            <div class="arch-label">Risk Engine</div>
+            <div class="arch-sub">Score 0–100</div>
+          </div>
+          <div class="arch-arrow-v animated-arrow" style="animation-delay:0.6s">
+            <div class="arch-arrow-line-v"></div>
+            <div class="arch-arrow-dot-v"></div>
+          </div>
+          <div class="arch-node arch-redact">
+            <div class="arch-icon">✂️</div>
+            <div class="arch-label">Redaction</div>
+            <div class="arch-sub">Auto-sanitize</div>
+          </div>
+        </div>
+
+        <div class="arch-branch arch-branch-right">
+          <div class="arch-storage-note">
+            <div>📦 localStorage</div>
+            <div class="arch-sub">Stats &amp; Logs</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-arrow animated-arrow" style="animation-delay:0.9s">
+        <div class="arch-arrow-line"></div>
+        <div class="arch-arrow-dot"></div>
+      </div>
+
+      <div class="arch-node arch-ai safe-node">
+        <div class="arch-icon">🤖</div>
+        <div class="arch-label">AI Platform</div>
+        <div class="arch-sub">Safe prompt only</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── IMPACT ────────────────────────────────────────────────────────────────-->
+<section class="section section-dark" id="impact">
+  <div class="container">
+    <div class="section-badge">💥 Impact</div>
+    <h2 class="section-title">Built for the <span class="grad-text">AI-First Enterprise</span></h2>
+
+    <div class="impact-grid">
+      <div class="impact-card">
+        <div class="impact-icon">🏛️</div>
+        <h3>GDPR Compliance</h3>
+        <p>Prevent accidental PII leaks that could trigger GDPR fines up to €20M or 4% of global revenue.</p>
+      </div>
+      <div class="impact-card">
+        <div class="impact-icon">💳</div>
+        <h3>PCI-DSS Protection</h3>
+        <p>Detect and redact credit card numbers, CVVs, and financial identifiers before they reach AI systems.</p>
+      </div>
+      <div class="impact-card">
+        <div class="impact-icon">🏥</div>
+        <h3>HIPAA Readiness</h3>
+        <p>Protect healthcare information from being shared with non-HIPAA-compliant AI platforms.</p>
+      </div>
+      <div class="impact-card">
+        <div class="impact-icon">🔐</div>
+        <h3>Zero Trust Security</h3>
+        <p>Every prompt treated as untrusted until verified. Defense-in-depth approach to AI security.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ROADMAP ───────────────────────────────────────────────────────────────-->
+<section class="section" id="roadmap">
+  <div class="container">
+    <div class="section-badge">🗺️ Roadmap</div>
+    <h2 class="section-title">Product <span class="grad-text">Roadmap</span></h2>
+
+    <div class="timeline">
+      <div class="timeline-item done">
+        <div class="timeline-dot done-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 1 — MVP ✅</div>
+          <h3>Chrome Extension + Dashboard</h3>
+          <p>Detection engine, risk scoring, redaction, popup UI, analytics dashboard, landing page.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 2 — Q3 2025</div>
+          <h3>Enterprise Features</h3>
+          <p>Team policies, centralized admin dashboard, SSO integration, audit logging.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 3 — Q4 2025</div>
+          <h3>AI-Powered Rewriting</h3>
+          <p>LLM-powered prompt rewriting that preserves meaning while removing all sensitive data.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 4 — 2026</div>
+          <h3>API & Integrations</h3>
+          <p>REST API, Slack bot, CI/CD plugins, enterprise SIEM integrations, Firefox extension.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TEAM ──────────────────────────────────────────────────────────────────-->
+<section class="section section-dark" id="team">
+  <div class="container">
+    <div class="section-badge">👥 Team</div>
+    <h2 class="section-title">Built by <span class="grad-text">Security-First Engineers</span></h2>
+
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">👨‍💻</div>
+        <div class="team-name">Anshu Chowdhury</div>
+        <div class="team-role">Founder & Lead Engineer</div>
+        <div class="team-bio">Full-stack engineer & cybersecurity architect. Built PromptShield to solve the AI data leak problem.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">🛡️</div>
+        <div class="team-name">Security Research</div>
+        <div class="team-role">Threat Intelligence</div>
+        <div class="team-bio">Detection patterns curated from OWASP, NIST, and real-world breach reports.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">🤖</div>
+        <div class="team-name">AI Research</div>
+        <div class="team-role">Risk Modeling</div>
+        <div class="team-bio">Risk scoring model trained on enterprise security incident data and compliance requirements.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA / CONTACT ─────────────────────────────────────────────────────────-->
+<section class="section cta-section" id="contact">
+  <div class="cta-glow-1"></div>
+  <div class="cta-glow-2"></div>
+  <div class="container cta-inner">
+    <h2 class="cta-title">Ready to Secure Your <span class="grad-text">AI Prompts?</span></h2>
+    <p class="cta-sub">Join thousands of developers and enterprises protecting sensitive data from AI leaks.</p>
+    <div class="cta-actions">
+      <a href="#" class="btn-hero btn-primary-hero">
+        <span>🛡️ Install Free Extension</span>
+      </a>
+      <a href="mailto:security@promptshield.ai" class="btn-hero btn-ghost-hero">
+        <span>📧 Contact Us</span>
+      </a>
+    </div>
+    <p class="cta-note">Free forever. No account required. 100% local processing.</p>
+  </div>
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────────────────────────────────-->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2Z" fill="url(#fl-grad)"/>
+        <path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="fl-grad" x1="3" y1="2" x2="21" y2="23" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#00d4ff"/><stop offset="100%" stop-color="#7b2ff7"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span>PromptShield AI</span>
+    </div>
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="mailto:security@promptshield.ai">Contact</a>
+    </div>
+    <div class="footer-copy">© 2026 PromptShield AI. Zero-Trust AI Protection.</div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
